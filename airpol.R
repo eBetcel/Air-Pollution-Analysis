@@ -29,5 +29,23 @@ complete <- function(directory, id = 1:332){
     colnames(df) <- c("id", "nobs")
     return(df)
 }
+
+corr <- function(directory, threshold = 0){
+    #Creates numeric vector
+    correlation_results <- numeric(0)
+    #Creates data frame and fills it with complete cases
+    complete_df <- complete(directory)
+    complete_df <- complete_df[complete_df["nobs"]>=threshold,]
+    for (i in complete_df$id){
+        #Reads files
+        m_data<- read.csv(paste0(getwd(),"/",directory,"/",sprintf("%03d", i),".csv"))
+        relevant_data <- m_data[(!is.na(m_data["sulfate"])), ]
+        relevant_data <- relevant_data[(!is.na(relevant_data["nitrate"])), ]
+        sulfate <- relevant_data["sulfate"]
+        nitrate <- relevant_data["nitrate"]
+        correlation_results <- c(correlation_results, cor(sulfate, nitrate))
+    }
+    correlation_results
+}
     
 
